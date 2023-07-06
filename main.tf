@@ -1,50 +1,35 @@
 resource "newrelic_synthetics_monitor" "pitambar_simple_ping" {
-  count            = length(var.ping_monitor_regions)
-  status           = "ENABLED"
-  name             = "pitambar simple monitor ${count.index + 1}"
-  period           = "EVERY_MINUTE"
+  count            = length(var.tsm)
+  status           = lookup(var.tsm[count.index], "status")
+  name             = lookup(var.tsm[count.index], "name")
+  period           = lookup(var.tsm[count.index], "period")
   uri              = "https://www.google.com"
-  type             = "SIMPLE"
-  locations_public = [var.ping_monitor_regions[count.index]]
+  type             = lookup(var.tsm[count.index], "type")
+  locations_public = lookup(var.tsm[count.index], "locations_public")
 
-  custom_header {
-    name  = "pitambar header"
-    value = "some_value"
-  }
-
-  treat_redirect_as_failure = true
-  validation_string         = "success"
-  bypass_head_request       = true
-  verify_ssl                = true
+  verify_ssl = lookup(var.tsm[count.index], "verify_ssl")
 
   tag {
-    key    = "some_key"
-    values = ["some_value"]
+    key    = lookup(var.tsm[count.index], "key")
+    values = lookup(var.tsm[count.index], "values")
   }
 }
 
 
-
 resource "newrelic_synthetics_monitor" "bittu_browser" {
-  count            = length(var.browser_monitor_regions)
-  status           = "ENABLED"
-  name             = "bittu browser monitor ${count.index + 1}"
-  period           = "EVERY_6_HOURS"
+  count            = length(var.tsm_1)
+  status           = lookup(var.tsm_1[count.index], "status")
+  name             = lookup(var.tsm_1[count.index], "name")
+  period           = lookup(var.tsm_1[count.index], "period")
   uri              = "https://www.google.com"
-  type             = "BROWSER"
-  locations_public = [var.browser_monitor_regions[count.index]]
+  type             = lookup(var.tsm_1[count.index], "type")
+  locations_public = lookup(var.tsm_1[count.index], "locations_public")
 
-  custom_header {
-    name  = "bittu header"
-    value = "some_value"
-  }
+  verify_ssl = lookup(var.tsm_1[count.index], "verify_ssl")
 
-  enable_screenshot_on_failure_and_script = true
-  validation_string                       = "success"
-  verify_ssl                              = true
 
   tag {
-    key    = "some_key"
-    values = ["some_value"]
+    key    = lookup(var.tsm_1[count.index], "key")
+    values = lookup(var.tsm_1[count.index], "values")
   }
 }
